@@ -1,0 +1,231 @@
+/* General Styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #e3e3e3;
+    /* Light grey background */
+    color: #333;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+}
+
+/* Section Titles */
+#current-weather h2,
+#forecast h2,
+#quick-links h3,
+#search-history h3 {
+    text-align: left;
+    /* Align text to the left */
+    margin-left: 1rem;
+    /* Add some left margin for better spacing */
+}
+
+/* Header Styles */
+header {
+    background-color: #007bff;
+    /* Blue background for the header */
+    color: #fff;
+    padding: 1rem;
+    text-align: center;
+}
+
+header h1 {
+    margin: 0;
+}
+
+/* Search Section */
+#search-section {
+    background-color: #fff;
+    /* White background for search section */
+    padding: 1rem;
+    margin: 1rem;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    /* Box shadow for card effect */
+}
+
+#city-input {
+    padding: 0.5rem;
+    margin-right: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+#search-button {
+    padding: 0.5rem 1rem;
+    background-color: #007bff;
+    /* Blue background for button */
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+}
+
+#search-button:hover {
+    background-color: #0056b3;
+    /* Darker blue on hover */
+}
+
+#theme-toggle,
+#unit-toggle {
+    border-radius: 50px;
+}
+
+/* Current Weather */
+#current-weather {
+    background-color: #fff;
+    /* White background for current weather section */
+    padding: 1rem;
+    margin: 1rem;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    /* Box shadow for card effect */
+    display: flex;
+    justify-content: space-between;
+}
+
+#current-weather img {
+    width: 50px;
+    /* Size of weather icon */
+}
+
+/* Forecast Section */
+#forecast {
+    display: flex;
+    justify-content: space-between;
+    margin: 1rem;
+}
+
+.forecast-item {
+    background-color: #514d4d;
+    /* White background for forecast cards */
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    width: 15%;
+    text-align: center;
+    padding: 1rem;
+    color: #fff;
+}
+
+.forecast-item img {
+    width: 50px;
+    /* Size of weather icon */
+}
+
+
+/* Top Cities Links Container */
+#quick-links {
+    margin: 1rem;
+}
+
+/* Links Styles */
+#quick-links .links-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 0;
+    list-style: none;
+}
+
+#quick-links .links-container a {
+    background-color: #007bff;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 15px;
+    text-align: center;
+    text-decoration: none;
+    transition: background-color 0.3s;
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+
+#quick-links .links-container a:hover {
+    background-color: #0056b3;
+
+}
+
+/* Search History Button Styles */
+.history-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 15px;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 0.8rem;
+    display: inline-block;
+    width: auto;
+    margin: 2px;
+    transition: background-color 0.3s;
+}
+
+.history-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Footer */
+footer {
+    background-color: #007bff;
+
+    color: #fff;
+    text-align: center;
+    padding: 1rem;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}
+
+/* Dark Mode Styles */
+body.dark-mode {
+    background-color: #121212;
+    /* Darker background for dark mode */
+    color: #ffffff;
+    /* Light text for dark mode */
+}
+
+body.dark-mode header,
+body.dark-mode footer {
+    background-color: #0a0a0a;
+    /* Darker header and footer for dark mode */
+}
+
+body.dark-mode #search-section,
+body.dark-mode #current-weather,
+body.dark-mode .forecast-item,
+body.dark-mode #search-history {
+    background-color: #1e1e1e;
+    /* Darker cards for dark mode */
+    color: #ffffff;
+    /* Light text for dark mode */
+    box-shadow: 0 2px 5px rgba(255, 255, 255, 0.1);
+    /* Adjusted box shadow for dark mode */
+}
+
+
+
+body.dark-mode .links-container a {
+    background-color: #333;
+    /* Darker link backgrounds for dark mode */
+    color: #ffffff;
+}
+
+body.dark-mode .links-container a:hover {
+    background-color: #555;
+    /* Even darker on hover for links in dark mode */
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    #quick-links .links-container {
+        justify-content: center;
+    }
+
+    #quick-links .links-container a {
+        flex: 1 1 auto;
+        /* Buttons take full width on smaller screens */
+        margin-bottom: 0.5rem;
+        /* Add some margin at the bottom */
+    }
+}

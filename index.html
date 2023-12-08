@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Dashboard</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <h1>Weather Dashboard</h1>
+            <button id="theme-toggle">Dark Mode</button> <!-- Dark mode toggle button -->
+            <button id="unit-toggle" data-unit="metric">Fahrenheit</button> <!--Switch to Farenheit-->
+        </div>
+    </header>
+    <main>
+        <div class="container">
+            <section id="search-section">
+                <input type="text" id="city-input" placeholder="Enter city name">
+                <button id="search-button">Search</button>
+            </section>
+            <div class="weather-info">
+                <section id="current-weather">
+                    <!-- Current weather will be displayed here -->
+                </section>
+                <section id="forecast">
+                    <div class="forecast-container">
+                        <!-- Individual forecast boxes will be dynamically generated here -->
+                    </div>
+                </section>
+                <aside id="quick-links">
+                    <h3>Top Cities - USA</h3>
+                    <div class="links-container usa">
+                        <!-- Links for top US cities will be generated here -->
+                    </div>
+                    <h3>Top Cities - World</h3>
+                    <div class="links-container world">
+                        <!-- Links for top world cities will be generated here -->
+                    </div>
+                </aside>
+            </div>
+            <aside id="search-history">
+                <!-- Search history will be displayed here -->
+            </aside>
+        </div>
+        <div id="error-message" style="display: none;">
+        </div>
+    </main>
+    <footer>
+        <div class="container">
+            <p>&copy; 2023 Weather Dashboard. All rights reserved.</p>
+        </div>
+    </footer>
+    <script src="/scripts/jscript.js"></script>
+</body>
+
+</html>
