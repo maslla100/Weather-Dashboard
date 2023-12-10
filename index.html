@@ -12,30 +12,27 @@
     <header>
         <div class="container">
             <h1>Weather Dashboard</h1>
-            <button id="theme-toggle">Dark Mode</button> <!-- Dark mode toggle button -->
-            <button id="unit-toggle" data-unit="metric">Fahrenheit</button> <!--Switch to Farenheit-->
+            <button id="theme-toggle" aria-label="Toggle dark mode">Dark Mode</button>
+            <button id="unit-toggle" data-unit="metric" aria-label="Change temperature units">Change Units</button>
         </div>
+        <div id="loading-indicator" style="display: none;">Loading weather data...</div>
     </header>
     <main>
         <div class="container">
             <section id="search-section">
-                <input type="text" id="city-input" placeholder="Enter city name">
-                <button id="search-button">Search</button>
+                <input type="text" id="city-input" placeholder="Enter city name" aria-label="City name">
+                <button id="search-button" aria-label="Search weather">Search</button>
             </section>
             <div class="weather-info">
                 <section id="current-weather">
-                    <!-- Current weather will be displayed here -->
+                    <!-- Placeholder or initial content for current weather -->
                 </section>
                 <section id="forecast">
                     <div class="forecast-container">
-                        <!-- Individual forecast boxes will be dynamically generated here -->
+                        <!-- Placeholder or initial content for forecast -->
                     </div>
                 </section>
                 <aside id="quick-links">
-                    <h3>Top Cities - USA</h3>
-                    <div class="links-container usa">
-                        <!-- Links for top US cities will be generated here -->
-                    </div>
                     <h3>Top Cities - World</h3>
                     <div class="links-container world">
                         <!-- Links for top world cities will be generated here -->
@@ -47,6 +44,7 @@
             </aside>
         </div>
         <div id="error-message" style="display: none;">
+            <!-- Error messages will appear here -->
         </div>
     </main>
     <footer>

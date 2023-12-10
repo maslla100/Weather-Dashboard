@@ -1,81 +1,130 @@
-// Define DEFAULT_CITY globally
-const DEFAULT_CITY = 'Austin';
+const defaultCity = 'Austin'; // Replace with a valid city name
+
+let currentUnit = 'imperial'; // Global unit variable
+
 
 document.getElementById('search-button').addEventListener('click', function () {
     const city = document.getElementById('city-input').value;
-    const unit = document.getElementById('unit-toggle').getAttribute('data-unit');
-    fetchWeatherData(city, unit);
+    if (city) {
+        fetchWeatherData(city);
+    } else {
+        alert("Please enter a city name.");
+    }
 });
 
-function fetchWeatherData(city, unit) {
-    const apiKey = '9ad8154b296d191a807e5147e8cb2afd';
-    const encodedCity = encodeURIComponent(city || 'Austin'); // Replace 'New York' with your chosen default city
-    const url = `https://api.openweathermap.org/data/2.5/forecast?q=${encodedCity}&appid=${apiKey}&units=${unit}`;
+
+window.onload = function () {
+    currentUnit = localStorage.getItem('preferredUnit') || 'imperial';
+    initializeUnitToggle(currentUnit);
+    loadUserLocationWeather(currentUnit);
+    generateCityLinks();
+    displaySearchHistory();
+};
+
+function initializeUnitToggle() {
+    document.getElementById('unit-toggle').setAttribute('data-unit', currentUnit);
+    document.getElementById('unit-toggle').textContent = currentUnit === 'metric' ? 'Metric' : 'Imperial';
+    console.log("Unit changed to:", currentUnit); // Add this line for debugging
+
+    document.getElementById('unit-toggle').addEventListener('click', function () {
+        currentUnit = currentUnit === 'metric' ? 'imperial' : 'metric';
+
+        this.setAttribute('data-unit', currentUnit);
+        this.textContent = currentUnit === 'metric' ? 'Metric' : 'Imperial';
+
+        localStorage.setItem('preferredUnit', currentUnit);
+        updateApplicationForUnit();
+    });
+}
+
+function updateApplicationForUnit() {
+    const lastSearchedCity = localStorage.getItem('lastSearchedCity')
+    fetchWeatherData(lastSearchedCity, currentUnit);
+    generateCityLinks();
+    displaySearchHistory();
+}
+
+function loadUserLocationWeather() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(position => {
+            fetchWeatherByCoordinates(position.coords.latitude, position.coords.longitude);
+        }, error => {
+            console.error('Error:', error);
+            document.getElementById('error-message').style.display = 'block';
+            document.getElementById('error-message').textContent = 'Unable to retrieve your location for weather information.';
+            fetchWeatherData(defaultCity, currentUnit);
+        });
+    } else {
+        console.log('Geolocation is not supported by this browser.');
+        fetchWeatherData(defaultCity, currentUnit);
+    }
+}
+
+function fetchWeatherData(city = defaultCity, unit = currentUnit) {
+    showLoadingIndicator();
+    const apiKey = 'de0b781cf9227d6db6916820dd85db21';
+    const encodedCity = encodeURIComponent(city);
+    const url = `https://api.openweathermap.org/data/2.5/forecast?q=${encodedCity}&appid=${apiKey}&units=${currentUnit}`;
+
 
     fetch(url)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            return response.json();
-        })
+        .then(response => response.json())
         .then(data => {
             if (data.cod && data.cod !== '200') {
                 throw new Error(data.message || 'Failed to fetch weather data');
             }
-            displayCurrentWeather(data, unit);
-            displayForecast(data, unit);
+            displayCurrentWeather(data);
+            displayForecast(data);
             updateSearchHistory(city);
+            hideLoadingIndicator();
         })
+
         .catch(error => {
             console.error('Error:', error);
-            alert(error.message || 'An error occurred');
+            displayErrorMessage(error.message || 'An error occurred');
+            hideLoadingIndicator();
         });
 }
 
-function displayCurrentWeather(data, unit) {
-    if (!data || !data.main || !data.wind || !data.weather) {
-        console.error('Invalid data structure for current weather');
-        return;
-    }
 
-    const tempUnit = unit === 'metric' ? '°C' : '°F';
-    const windSpeedUnit = unit === 'metric' ? 'm/s' : 'mph';
-    const windSpeed = unit === 'metric' ? data.wind.speed : (data.wind.speed * 2.23694).toFixed(1);
-
+function displayCurrentWeather(data) {
+    const isCurrentWeather = !Array.isArray(data.list);
+    const weatherData = isCurrentWeather ? data : data.list[0];
+    const tempUnit = currentUnit === 'metric' ? '°C' : '°F';
+    const windSpeedUnit = currentUnit === 'metric' ? 'm/s' : 'MPH';
+    const windSpeed = currentUnit === 'metric' ? weatherData.wind.speed : (weatherData.wind.speed * 2.23694).toFixed(1);
     const weatherHtml = `
-        <h2>Current Weather in ${data.name}</h2>
-        <p><strong>Date:</strong> ${new Date(data.dt * 1000).toLocaleDateString()}</p>
-        <p><strong>Temperature:</strong> ${data.main.temp} ${tempUnit}</p>
-        <p><strong>Humidity:</strong> ${data.main.humidity}%</p>
+        <h2>Current Weather in ${isCurrentWeather ? data.name : data.city.name}</h2>
+        <p><strong>Date:</strong> ${new Date(isCurrentWeather ? data.dt * 1000 : weatherData.dt_txt).toLocaleDateString()}</p>
+        <p><strong>Temperature:</strong> ${weatherData.main.temp} ${tempUnit}</p>
+        <p><strong>Humidity:</strong> ${weatherData.main.humidity}%</p>
         <p><strong>Wind Speed:</strong> ${windSpeed} ${windSpeedUnit}</p>
-        <img src="https://openweathermap.org/img/wn/${data.weather[0].icon}.png" alt="Weather icon">
+        <img src="https://openweathermap.org/img/wn/${weatherData.weather[0].icon}.png" alt="Weather icon">
     `;
     document.getElementById('current-weather').innerHTML = weatherHtml;
 }
 
 
-function displayForecast(data, unit) {
-    console.log('Forecast data:', data); // Add this line to inspect the data structure
-    if (!data || data.length === 0) {
-        console.error('No forecast data available');
-        return;
-    }
 
+function displayForecast(data) {
     let forecastHtml = '<h2>5-Day Forecast</h2>';
-    const tempUnit = unit === 'metric' ? '°C' : '°F';
-    const windSpeedUnit = unit === 'metric' ? 'm/s' : 'MPH';
+    const tempUnit = currentUnit === 'metric' ? '°C' : '°F';
+    const windSpeedUnit = currentUnit === 'metric' ? 'm/s' : 'MPH';
 
-    for (let i = 0; i < Math.min(data.length, 5); i++) { // Limit to 5 days
-        const dayForecast = data[i];
-        const windSpeed = unit === 'metric' ? dayForecast.wind_speed : (dayForecast.wind_speed * 2.23694).toFixed(1);
+    // Start from the next day's data, assuming the first item in the list is today's weather
+    // If the first item in the list starts at a time indicating today, skip 8 intervals ahead
+    let startIndex = data.list[0].dt_txt.indexOf("00:00:00") !== -1 ? 8 : 1;
+
+    for (let i = startIndex; i < data.list.length; i += 8) { // Increment by 8 for every 24 hour period
+        const dayForecast = data.list[i];
+        const windSpeed = currentUnit === 'metric' ? dayForecast.wind.speed : (dayForecast.wind.speed * 2.23694).toFixed(1);
 
         forecastHtml += `
             <div class="forecast-item">
-                <h3>${new Date(dayForecast.dt * 1000).toLocaleDateString()}</h3>
+                <h3>${new Date(dayForecast.dt_txt).toLocaleDateString()}</h3>
                 <img src="https://openweathermap.org/img/wn/${dayForecast.weather[0].icon}.png" alt="Weather icon">
-                <p>Temp: ${dayForecast.temp.day} ${tempUnit}</p>
-                <p>Humidity: ${dayForecast.humidity}%</p>
+                <p>Temp: ${dayForecast.main.temp} ${tempUnit}</p>
+                <p>Humidity: ${dayForecast.main.humidity}%</p>
                 <p>Wind Speed: ${windSpeed} ${windSpeedUnit}</p>
             </div>
         `;
@@ -83,64 +132,38 @@ function displayForecast(data, unit) {
     document.getElementById('forecast').innerHTML = forecastHtml;
 }
 
-
-
-
 function updateSearchHistory(city) {
     let history = JSON.parse(localStorage.getItem('searchHistory')) || [];
     if (!history.includes(city)) {
         history.push(city);
-
+        if (history.length > 5) {
+            history = history.slice(-5);
+        }
+        localStorage.setItem('searchHistory', JSON.stringify(history));
     }
     displaySearchHistory();
 }
 
+
 function displaySearchHistory() {
     let history = JSON.parse(localStorage.getItem('searchHistory')) || [];
     let historyHtml = '<h3>Search History</h3>';
-    let unit = document.getElementById('unit-toggle').getAttribute('data-unit'); // Get the current unit
     history.forEach(city => {
-        // Correctly use fetchCurrentWeather for current weather
-        historyHtml += `<button class="history-btn" onclick="fetchCurrentWeather('${city}', '${unit}')">${city}</button>`;
+        historyHtml += `<button class="history-btn" onclick="fetchWeatherData('${city}', '${currentUnit}')">${city}</button>`;
     });
     document.getElementById('search-history').innerHTML = historyHtml;
-}
-
-function fetchCurrentWeather(city, unit) {
-    const apiKey = '9ad8154b296d191a807e5147e8cb2afd'; // Secure your API key
-    const encodedCity = encodeURIComponent(city);
-    const geocodingUrl = `https://api.openweathermap.org/geo/1.0/direct?q=${encodedCity}&limit=1&appid=${apiKey}`;
-
-    fetch(geocodingUrl)
-        .then(response => response.json())
-        .then(locations => {
-            if (locations.length > 0) {
-                const { lat, lon } = locations[0];
-                fetchWeatherByCoordinates(lat, lon, unit);
-            } else {
-                throw new Error('Location not found');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert(error.message || 'An error occurred during geocoding.');
-        });
 }
 
 
 
 // Function to generate links for top cities
 function generateCityLinks() {
-    const topUSACities = ['Austin', 'New York', 'Los Angeles', 'Chicago', 'Seattle'];
     const topWorldCities = ['Tokyo', 'Paris', 'London', 'Sidney', 'Rome'];
-
-    let usaCitiesHtml = topUSACities.map(city => `<a href="#" onclick="fetchWeatherData('${city}')">${city}</a>`).join('');
-    let worldCitiesHtml = topWorldCities.map(city => `<a href="#" onclick="fetchWeatherData('${city}')">${city}</a>`).join('');
-
-    document.querySelector('#quick-links .links-container.usa').innerHTML = usaCitiesHtml;
+    let worldCitiesHtml = topWorldCities.map(city =>
+        `<a href="#" onclick="fetchWeatherData('${city}', '${currentUnit}')">${city}</a>`
+    ).join('');
     document.querySelector('#quick-links .links-container.world').innerHTML = worldCitiesHtml;
 }
-
 generateCityLinks();
 
 document.getElementById('theme-toggle').addEventListener('click', function () {
@@ -149,26 +172,14 @@ document.getElementById('theme-toggle').addEventListener('click', function () {
     this.textContent = document.body.classList.contains('dark-mode') ? 'Light Mode' : 'Dark Mode';
 });
 
-document.getElementById('unit-toggle').addEventListener('click', function () {
-    const currentUnit = this.getAttribute('data-unit');
-    const newUnit = currentUnit === 'metric' ? 'imperial' : 'metric';
-    this.setAttribute('data-unit', newUnit);
-    this.textContent = newUnit === 'metric' ? 'Imperial' : 'Metric';
-    localStorage.setItem('preferredUnit', newUnit);
-
-    const city = document.getElementById('city-input').value;
-    if (city) fetchWeatherData(city, newUnit);
-});
-
 const preferredUnit = localStorage.getItem('preferredUnit') || 'metric';
 document.getElementById('unit-toggle').setAttribute('data-unit', preferredUnit);
 document.getElementById('unit-toggle').textContent = preferredUnit === 'metric' ? 'Imperial' : 'Metric';
-fetchWeatherData('DefaultCity', preferredUnit);
+fetchWeatherData(defaultCity, preferredUnit);
 
-function fetchWeatherByCoordinates(lat, lon, unit) {
-    const apiKey = '9ad8154b296d191a807e5147e8cb2afd';
-    // Use One Call API to get both current weather and forecast
-    const url = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=minutely,hourly,alerts&appid=${apiKey}&units=${unit}`;
+function fetchWeatherByCoordinates(lat, lon) {
+    const apiKey = 'de0b781cf9227d6db6916820dd85db21';
+    const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=${currentUnit}`;
 
     fetch(url)
         .then(response => response.json())
@@ -176,10 +187,8 @@ function fetchWeatherByCoordinates(lat, lon, unit) {
             if (data.cod !== 200) {
                 throw new Error('Failed to fetch weather data');
             }
-            // The One Call API response includes current weather as `data.current`
-            // and daily forecast as an array in `data.daily`
-            displayCurrentWeather(data.current, unit); // You might need to adjust this function for the new data structure
-            displayForecast(data.daily, unit); // This will need to be a new function or an adjusted version of your existing displayForecast
+            displayCurrentWeather(data);
+
         })
         .catch(error => {
             console.error('Error:', error);
@@ -187,37 +196,17 @@ function fetchWeatherByCoordinates(lat, lon, unit) {
         });
 }
 
-
-function loadUserLocationWeather() {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(position => {
-            const unit = document.getElementById('unit-toggle').getAttribute('data-unit');
-            fetchWeatherByCoordinates(position.coords.latitude, position.coords.longitude, unit);
-        }, error => {
-            console.error('Error:', error);
-            alert('Unable to retrieve your location for weather information.');
-        });
-    } else {
-        alert('Geolocation is not supported by this browser.');
-    }
+function displayErrorMessage(message) {
+    document.getElementById('error-message').textContent = message;
+    document.getElementById('error-message').style.display = 'block';
+}
+function showLoadingIndicator() {
+    document.getElementById('loading-indicator').style.display = 'block';
 }
 
-window.onload = () => {
-    const unit = document.getElementById('unit-toggle').getAttribute('data-unit');
+function hideLoadingIndicator() {
+    document.getElementById('loading-indicator').style.display = 'none';
+}
 
-    // Fetch weather data for the default city
-    fetchWeatherData(DEFAULT_CITY, unit);
 
-    // Load user location weather if geolocation is supported
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(position => {
-            fetchWeatherByCoordinates(position.coords.latitude, position.coords.longitude, unit);
-        }, error => {
-            console.error('Error:', error);
-            alert('Unable to retrieve your location for weather information.');
-        });
-    } else {
-        alert('Geolocation is not supported by this browser.');
-    }
-};
 

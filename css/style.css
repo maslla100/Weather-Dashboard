@@ -34,36 +34,24 @@ header h1 {
 }
 
 /* Search Section */
-#search-section {
-    background-color: #fff;
-    /* White background for search section */
-    padding: 1rem;
-    margin: 1rem;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    /* Box shadow for card effect */
-}
-
+#search-button,
 #city-input {
-    padding: 0.5rem;
-    margin-right: 0.5rem;
+    padding: 8px 12px;
+    margin: 5px;
+    border-radius: 4px;
     border: 1px solid #ccc;
-    border-radius: 5px;
 }
 
 #search-button {
-    padding: 0.5rem 1rem;
     background-color: #007bff;
-    /* Blue background for button */
-    color: #fff;
-    border: none;
-    border-radius: 50px;
+    color: white;
     cursor: pointer;
 }
 
+
 #search-button:hover {
     background-color: #0056b3;
-    /* Darker blue on hover */
+    /* Darker shade for hover effect */
 }
 
 #theme-toggle,
@@ -72,39 +60,53 @@ header h1 {
 }
 
 /* Current Weather */
-#current-weather {
-    background-color: #fff;
-    /* White background for current weather section */
-    padding: 1rem;
-    margin: 1rem;
-    border-radius: 5px;
+.forecast-item {
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 4px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    /* Box shadow for card effect */
+    background-color: #fff;
+    width: 18%;
+    /* Adjust as needed */
+    display: inline-block;
+}
+
+/* Current Weather */
+#current-weather {
     display: flex;
-    justify-content: space-between;
+    /* Use flexbox to layout items in a row */
+    align-items: center;
+    /* Align items vertically in the center */
+    justify-content: space-around;
+    /* Space out items evenly */
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
 }
 
 #current-weather img {
     width: 50px;
-    /* Size of weather icon */
+    /* Adjust size as necessary */
+    margin-right: 10px;
+    /* Add some space between the icon and text */
 }
+
+#current-weather div {
+    display: flex;
+    flex-direction: column;
+    /* Stack the text vertically */
+    align-items: flex-start;
+    /* Align text to the start */
+}
+
 
 /* Forecast Section */
 #forecast {
     display: flex;
     justify-content: space-between;
     margin: 1rem;
-}
-
-.forecast-item {
-    background-color: #514d4d;
-    /* White background for forecast cards */
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    width: 15%;
-    text-align: center;
-    padding: 1rem;
-    color: #fff;
 }
 
 .forecast-item img {
@@ -177,55 +179,57 @@ footer {
     width: 100%;
 }
 
+#loading-indicator {
+    display: none;
+    /* Hidden by default */
+    text-align: center;
+    color: #333;
+    /* Or any color that stands out */
+    font-size: 1.2em;
+    padding: 10px;
+}
+
+
+
 /* Dark Mode Styles */
 body.dark-mode {
     background-color: #121212;
-    /* Darker background for dark mode */
-    color: #ffffff;
-    /* Light text for dark mode */
+    color: #fff;
 }
 
-body.dark-mode header,
-body.dark-mode footer {
-    background-color: #0a0a0a;
-    /* Darker header and footer for dark mode */
-}
-
-body.dark-mode #search-section,
-body.dark-mode #current-weather,
-body.dark-mode .forecast-item,
-body.dark-mode #search-history {
+body.dark-mode .forecast-item {
     background-color: #1e1e1e;
-    /* Darker cards for dark mode */
-    color: #ffffff;
-    /* Light text for dark mode */
-    box-shadow: 0 2px 5px rgba(255, 255, 255, 0.1);
-    /* Adjusted box shadow for dark mode */
 }
 
-
-
-body.dark-mode .links-container a {
+body.dark-mode #current-weather,
+body.dark-mode .forecast-item {
     background-color: #333;
-    /* Darker link backgrounds for dark mode */
-    color: #ffffff;
+    /* Darker background for current weather and forecast items */
+    color: #fff;
+    /* Light text color for current weather and forecast items */
 }
 
-body.dark-mode .links-container a:hover {
-    background-color: #555;
-    /* Even darker on hover for links in dark mode */
+body.dark-mode #current-weather img,
+body.dark-mode .forecast-item img {
+    filter: brightness(0) invert(1);
+    /* Invert colors of images/icons for better visibility */
 }
 
-/* Responsive adjustments */
+
 @media (max-width: 600px) {
-    #quick-links .links-container {
-        justify-content: center;
+    .container {
+        padding: 10px;
     }
 
-    #quick-links .links-container a {
-        flex: 1 1 auto;
-        /* Buttons take full width on smaller screens */
-        margin-bottom: 0.5rem;
-        /* Add some margin at the bottom */
+    #search-section,
+    .weather-info,
+    #quick-links {
+        flex-direction: column;
+    }
+
+    #search-button,
+    #city-input {
+        width: 100%;
+        margin-top: 5px;
     }
 }
