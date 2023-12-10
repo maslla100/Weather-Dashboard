@@ -24,6 +24,6 @@ The following image shows the web application's appearance and functionality:
 ![The Weather Dashboard shows the following image".](/Assets/sample.jpeg)
 
 ## Code
-URL to code: https://github.com/maslla100/Work-Day-Scheduler
+URL to code: https://github.com/maslla100/Weather-Dashboard
 ## Weather Dashboard Page
-URL to app: https://maslla100.github.io/Work-Day-Scheduler/
+URL to app: https://maslla100.github.io/Weather-Dashboard/
