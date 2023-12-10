@@ -21,7 +21,7 @@ To use this project, open the index.html file in your browser. The page will dis
 
 The following image shows the web application's appearance and functionality:
 
-![The Weather Dashboard shows the following image".](/Assets/sample.jpeg)
+![The Weather Dashboard shows the following image".](Assets/sample.jpeg)
 
 ## Code
 URL to code: https://github.com/maslla100/Weather-Dashboard
